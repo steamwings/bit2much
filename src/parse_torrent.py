@@ -57,11 +57,10 @@ def parse(file_path):
         elif key == "info":
             metainfo.parse(value)
             
-    metainfo.toStr()
-   # return metainfo
-             
-      
-if __name__ == '__main__':
-    file_path = '/home/vmuser/Desktop/Bit2Much/files/multifile.torrent'
+    #metainfo.toStr()
+    return metainfo
+                   
+#if __name__ == '__main__':
+    #file_path = '/home/vmuser/Desktop/Bit2Much/files/multifile.torrent'
     #return parse(file_path)
-    parse(file_path)
+    #parse(file_path)
