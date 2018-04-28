@@ -1,5 +1,6 @@
 #! /usr/bin/env python
-from decoder import bdecode
+#run pip install python_bencode
+from bencode import Bencoder
 
 class MetaInfo:
     def __init__(self, URL):
@@ -19,7 +20,7 @@ class MetaInfo:
         self.type = "single"
         self.file_len = length
     
-    def parse(self, info):        
+    def parse(self, info):      
         for key, value in info.items():            
             if key == "name":
                 self.name = value
@@ -44,23 +45,21 @@ class MetaInfo:
             print "Files dictionary: ",
             print self.file_dict
 
-def parse(file_path):
-    data = ""
-    file = open(file_path, "r") 
-    for line in file: 
-        data = data + line  
-    decoded_data = bdecode(data) 
-    
+def parse_data(decoded_data):
     for key, value in decoded_data.items():
         if key == "announce":
             metainfo = MetaInfo(value)
         elif key == "info":
             metainfo.parse(value)
-            
-    #metainfo.toStr()
     return metainfo
-                   
-#if __name__ == '__main__':
-    #file_path = '/home/vmuser/Desktop/Bit2Much/files/multifile.torrent'
-    #return parse(file_path)
-    #parse(file_path)
+    
+def decode_data(file_data):
+    decoded_data = Bencoder.decode(file_data)
+    return decoded_data 
+
+def read_file(file_path):
+    data = ""
+    file = open(file_path, "r") 
+    for line in file: 
+        data = data + line
+    return data
