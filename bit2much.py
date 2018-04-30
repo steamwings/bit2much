@@ -10,7 +10,7 @@ if __name__ == '__main__':
 ###############################PARSING###############################
 
     #filepath to the .torrent file
-    file_path = '/home/vmuser/Desktop/Bit2Much/files/multifile.torrent' 
+    file_path = '/home/vmuser/Desktop/Bit2Much/files/duenna.torrent' 
     
     #reads bencoded data from file
     file_data = read_file(file_path)

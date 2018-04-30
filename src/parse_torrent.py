@@ -49,12 +49,15 @@ def parse_data(decoded_data):
     for key, value in decoded_data.items():
         if key == "announce":
             metainfo = MetaInfo(value)
-        elif key == "info":
-            metainfo.parse(value)
+            break
+    for key, value in decoded_data.items():        
+         if key == "info":
+            metainfo.parse(value)       
     return metainfo
     
 def decode_data(file_data):
     decoded_data = Bencoder.decode(file_data)
+    #print decoded_data
     return decoded_data 
 
 def read_file(file_path):

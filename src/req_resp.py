@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 #run pip install python_bencode
 from bencode import Bencoder
+import urllib
 import hashlib
 import random
 from parse_torrent import *
@@ -46,14 +47,7 @@ def calc_total(metainfo):
     return left
 
 def url_encode(to_encode):
-    regexp = dict.fromkeys("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_.~")
-    encoded = ""
-    for byte in to_encode:
-        if byte in regexp.keys():
-            encoded = encoded + byte
-        else:
-            hex_value = byte.encode('hex')
-            encoded = encoded + "%" + hex_value.upper() 
+    encoded = urllib.quote(to_encode, '/~')
     return encoded
 
 def get_info_hash(decoded_data): 
