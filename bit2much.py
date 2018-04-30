@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import sys
 import urllib2
-sys.path.insert(0, '/home/vmuser/Bit2Much/src')
+sys.path.insert(0, '/home/vmuser/Desktop/Bit2Much/src')
 from parse_torrent import *
 from req_resp import *
 
