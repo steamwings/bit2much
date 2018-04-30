@@ -41,6 +41,9 @@ if __name__ == '__main__':
     url_request = urllib2.Request(tracker_url)
     url_response = urllib2.urlopen(url_request)
     print url_response.read()
+    
+    #[Full request URI [truncated]: http://bt2.archive.org:6969/announce?info_hash=v%5bS%22%bc%db%bb%ab%2a%ca%ba%29%a1-%1d%60%e1J%968&peer_id=-TR2840-ple1svqkc36t&port=51413&uploaded=0&downloaded=0&left=21571428&numwant=80&key=103e6e0f&compact=1]
+
    
 ##########################TRACKER RESPONSE########################### 
     
