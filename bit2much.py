@@ -10,7 +10,7 @@ if __name__ == '__main__':
 ###############################PARSING###############################
 
     #filepath to the .torrent file
-    file_path = '/home/vmuser/Desktop/Bit2Much/files/weight.torrent' 
+    file_path = '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
     
     #reads bencoded data from file
     file_data = read_file(file_path)
@@ -32,7 +32,7 @@ if __name__ == '__main__':
     #left->number of bytes this client still has to download in base 10 ASCII
     left = str(calc_total(metainfo))
     
-    port = str(51413)
+    port = str(6886)
     
     uploaded = str(0)
     
