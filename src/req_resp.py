@@ -58,17 +58,6 @@ def create_id():
     for i in range(11):
         peer_id = peer_id + str(random.randint(0,9))
     return url_encode(peer_id)    
-    
-def calc_total(metainfo):
-    left = 0
-    if metainfo.type == "single":
-        left = metainfo.file_len
-    elif metainfo.type == "mult":
-        for entry in metainfo.file_dict:
-            for k, v in entry.items():
-                if k == "length":
-                    left = left + v
-    return left
 
 def url_encode(to_encode):
     encoded = urllib.quote(to_encode, '/~')

@@ -40,7 +40,7 @@ if __name__ == '__main__':
     peer_id = create_id()
     
     #left->number of bytes this client still has to download in base 10 ASCII
-    left = str(calc_total(metainfo))
+    left = str(metainfo.calc_total())
     
     #port that client is listening on
     port = str(6886)
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
 
-    
+ 
     
     
     

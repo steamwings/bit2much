@@ -44,6 +44,17 @@ class MetaInfo:
             print "Files dictionary: ",
             print self.file_dict
 
+    def calc_total(self):
+        left = 0
+        if self.type == "single":
+            left = self.file_len
+        elif self.type == "mult":
+            for entry in self.file_dict:
+                for k, v in entry.items():
+                    if k == "length":
+                        left = left + v
+        return left
+
 def parse_data(decoded_data):
     for key, value in decoded_data.items():
         if key == "announce":
@@ -64,3 +75,5 @@ def read_file(file_path):
     for line in file:
         data = data + line
     return data
+    
+
