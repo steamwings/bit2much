@@ -14,6 +14,12 @@ def ba_to_int(bytearr, ntoh=True):
     if ntoh and (sys.byteorder == 'little'): bytearr.reverse()
     return int(binascii.hexlify(bytearr), 16)
 
+def int_to_ba(n, hton=True):
+    ba = bytearray(binascii.unhexlify(str(n)))
+    if hton and (sys.byteorder == 'little'):
+        ba.reverse()
+    return ba
+
 def parse_peers(peer_string, compact=1):
     peers = [] 
     peer_list = list(peer_string)      
@@ -32,10 +38,12 @@ def parse_peers(peer_string, compact=1):
     peers_count = len(peer_bytes)/6
    
     for i in range(0, peers_count):
-        peer_id = peer_bytes[peer_st:ip_st]
+        peer_net = peer_bytes[peer_st:ip_st]
         ip_net = peer_bytes[ip_st:port_st]
         port_net = peer_bytes[port_st:end]
-        
+       
+        peer_id = ba_to_int(peer_net)
+
         ip_host = ba_to_int(ip_net) # instead of ip_net.reverse()
         bytes_str = str(ip_host) #instead of "".join(map(chr, ip_host))
         ip_str = socket.inet_ntoa(bytes_str)
