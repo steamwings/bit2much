@@ -54,7 +54,6 @@ def parse_peers(peer_string, compact=1):
         if(sys.byteorder == 'little'):
             ip_net.reverse() # instead of ip_net.reverse()
         bytes_str = str(ip_net) #instead of "".join(map(chr, ip_host))
-        print bytes_str
         ip_str = socket.inet_ntoa(bytes_str)
         
         port_int = ba_to_int(port_net)  
