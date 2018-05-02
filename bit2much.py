@@ -1,17 +1,27 @@
 #! /usr/bin/env python
 import sys
 import urllib2
+import argparse
 sys.path.insert(0, '/home/vmuser/Desktop/Bit2Much/src')
 from parse_torrent import *
 from req_resp import *
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(prog='Bit2Much.py')
+    parser.add_argument('--verbose', '-v', action='store_true', help='-v for more information')
+    parser.add_argument('--file', '-f', required=False, help='Path to .torrent file')
     
+    args = parser.parse_args()
+    verbose = args.verbose
+    file_path = args.file if args.file is not None 
+        else '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
+
+    if verbose:
+        import logging
+        logging.getLogger("scapy").setLevel(1)
+
 ###############################PARSING###############################
 
-    #filepath to the .torrent file
-    file_path = '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
-    
     #reads bencoded data from file
     file_data = read_file(file_path)
     
@@ -38,7 +48,7 @@ if __name__ == '__main__':
     
     downloaded = str(0)
     
-    compact = str(1)
+    compact = str(1)_
      
     #assemble a tracker url
     tracker_url = metainfo.URL + "?info_hash=" + info_hash + "&peer_id=" + peer_id + "&port=" + port + "&uploaded=" + uploaded + "&downloaded=" + downloaded + "&left=" + left + "&compact=" + compact
