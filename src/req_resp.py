@@ -9,9 +9,11 @@ from parse_torrent import *
 from encode_src import *
 
 def parse_peers(peer_string):
+    
     peers = dict()
     peer_list = list(peer_string)      
     peer_bytes = bytearray(peer_list)
+    
       
     start = 0
     mid = 4
