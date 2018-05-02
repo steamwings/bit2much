@@ -5,6 +5,7 @@ import argparse
 sys.path.insert(0, '/home/vmuser/Desktop/Bit2Much/src')
 from parse_torrent import *
 from req_resp import *
+from util import verbose
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='Bit2Much.py')
@@ -16,7 +17,7 @@ if __name__ == '__main__':
     file_path = args.file if args.file is not None \
         else '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent'
 
-    if verbose: # Not sure this works. We may have to getLogger before importing scapy
+    if verbose: # Not quite sure if we can getLogger after importing scapy
         import logging
         logging.getLogger("scapy").setLevel(1)
 
@@ -75,6 +76,8 @@ if __name__ == '__main__':
     
     #indicates a failure reason
     if parsed_resp is None:
+        if verbose: 
+            print("Failed to parse tracker response!")
         sys.exit()
     
     #a tuple of information from Tracker's Response
