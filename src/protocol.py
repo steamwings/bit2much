@@ -1,3 +1,5 @@
-#! /usr/bin/env python
-    
 
+class BT(Packet):
+    name = "BitTorrent"
+    fields_desc = [ ShortField
+     

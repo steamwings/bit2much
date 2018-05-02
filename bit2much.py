@@ -13,7 +13,7 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     verbose = args.verbose
-    file_path = args.file if args.file is not None 
+    file_path = args.file if args.file is not None \
         else '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
 
     if verbose:
@@ -48,7 +48,7 @@ if __name__ == '__main__':
     
     downloaded = str(0)
     
-    compact = str(1)_
+    compact = str(1)
      
     #assemble a tracker url
     tracker_url = metainfo.URL + "?info_hash=" + info_hash + "&peer_id=" + peer_id + "&port=" + port + "&uploaded=" + uploaded + "&downloaded=" + downloaded + "&left=" + left + "&compact=" + compact
