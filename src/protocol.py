@@ -1,4 +1,5 @@
 from scapy.packet import *
+from util import *
 
 # return handshake bytes
 def get_handshake(info_hash, peer_id):
@@ -6,7 +7,6 @@ def get_handshake(info_hash, peer_id):
             + bytearray('BitTorrent protocol') \ # protocol name
             + bytearray(8) \ # padding
             + info_hash + int_to_ba(peer_id)
-    
 
 class BT(Packet):
     name = "BTLEN"
