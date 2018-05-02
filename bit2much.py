@@ -13,12 +13,10 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     verbose = args.verbose
-    if args.file is not None:        
-        file_path = args.file 
-    else:
-        file_path = '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
+    file_path = args.file if args.file is not None \
+        else '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent'
 
-    if verbose:
+    if verbose: # Not sure this works. We may have to getLogger before importing scapy
         import logging
         logging.getLogger("scapy").setLevel(1)
 
@@ -42,7 +40,7 @@ if __name__ == '__main__':
     peer_id = create_id()
     
     #left->number of bytes this client still has to download in base 10 ASCII
-    left = str(calc_total(metainfo))
+    left = str(metainfo.calc_total())
     
     #port that client is listening on
     port = str(6886)
@@ -59,7 +57,8 @@ if __name__ == '__main__':
     #assemble a tracker url
     tracker_url = metainfo.URL + "?info_hash=" + info_hash + "&peer_id=" + peer_id + "&port=" + port + "&uploaded=" + uploaded + "&downloaded=" + downloaded + "&left=" + left + "&compact=" + compact
     
-    print tracker_url
+    if verbose:
+        print tracker_url
     
     #send HTTP request to the tracker
     url_request = urllib2.Request(tracker_url)
@@ -70,7 +69,8 @@ if __name__ == '__main__':
 ##########################TRACKER RESPONSE########################### 
     
     decoded_resp = decode_data(url_resp)
-    #print decoded_resp
+    if verbose:
+        print decoded_resp
     parsed_resp = parse_resp(decoded_resp)
     
     #indicates a failure reason
@@ -79,7 +79,6 @@ if __name__ == '__main__':
     
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
-    
     
     
     
