@@ -32,17 +32,20 @@ if __name__ == '__main__':
     #left->number of bytes this client still has to download in base 10 ASCII
     left = str(calc_total(metainfo))
     
+    #port that client is listening on
     port = str(6886)
     
+    #total amount uploaded
     uploaded = str(0)
     
+    #total amount downloaded
     downloaded = str(0)
     
+    #indicates that the client accepts a compact response
     compact = str(1)
      
     #assemble a tracker url
     tracker_url = metainfo.URL + "?info_hash=" + info_hash + "&peer_id=" + peer_id + "&port=" + port + "&uploaded=" + uploaded + "&downloaded=" + downloaded + "&left=" + left + "&compact=" + compact
-    #tracker_url = "http://bt1.archive.org:6969/announce?info_hash=U%15%b8%5eY%3ay%a1%06%10W%f5%88o%03%d1%09~%9c%f3&peer_id=-TR2840-ocsg19zy1vxs&port=51413&uploaded=0&downloaded=0&left=56037050&numwant=80&key=16a5b84c&compact=1&s"
     
     print tracker_url
     
@@ -51,20 +54,34 @@ if __name__ == '__main__':
     url_response = urllib2.urlopen(url_request)
     url_resp = url_response.read()
     
-    #[Full request URI [truncated]: http://bt2.archive.org:6969/announce?info_hash=v%5bS%22%bc%db%bb%ab%2a%ca%ba%29%a1-%1d%60%e1J%968&peer_id=-TR2840-ple1svqkc36t&port=51413&uploaded=0&downloaded=0&left=21571428&numwant=80&key=103e6e0f&compact=1] for Duemma
-    #[http://bt1.archive.org:6969/announce?info_hash=U%15%b8%5eY%3ay%a1%06%10W%f5%88o%03%d1%09~%9c%f3&peer_id=-TR2840-ocsg19zy1vxs&port=51413&uploaded=0&downloaded=0&left=56037050&numwant=80&key=16a5b84c&compact=1&s] for weight
-
-
-
-    
-
    
 ##########################TRACKER RESPONSE########################### 
     
     decoded_resp = decode_data(url_resp)
     print decoded_resp
-    #(interval, tracker_id, complete, incomplete, peers) = parse_resp(decoded_resp)
-    #if len(tracker_id) == 0:
-        #sys.exit()
-    #peers is a list of dicts with keys: peer id, ip, port
+    parsed_resp = parse_resp(decoded_resp)
+    
+    #indicates a failure reason
+    if parsed_resp is None:
+        sys.exit()
+    
+    #a tuple of information from Tracker's Response
+    (interval, tracker_id, complete, incomplete, peers) = parsed_resp
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
         
