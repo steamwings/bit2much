@@ -13,8 +13,10 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     verbose = args.verbose
-    file_path = args.file if args.file is not None 
-        else '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
+    if args.file is not None:        
+        file_path = args.file 
+    else:
+        file_path = '/home/vmuser/Desktop/Bit2Much/files/ubuntu.torrent' 
 
     if verbose:
         import logging
@@ -68,7 +70,7 @@ if __name__ == '__main__':
 ##########################TRACKER RESPONSE########################### 
     
     decoded_resp = decode_data(url_resp)
-    print decoded_resp
+    #print decoded_resp
     parsed_resp = parse_resp(decoded_resp)
     
     #indicates a failure reason
@@ -77,9 +79,6 @@ if __name__ == '__main__':
     
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
-
-    
-    
     
     
     

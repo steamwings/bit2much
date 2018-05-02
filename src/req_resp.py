@@ -10,25 +10,31 @@ from encode_src import *
 
 def parse_peers(peer_string):
     peers = dict()
-    peer_list = list(peer_string)
+    peer_list = list(peer_string)      
     peer_bytes = bytearray(peer_list)
-    
+      
     start = 0
     mid = 4
     end = 6   
-    for i in xrange(0, len(peer_bytes), 6):
+    peers_count = len(peer_bytes)/6
+   
+    for i in range(0, peers_count):
         ip_net = peer_bytes[start:mid]
-        peer_net = peer_bytes[mid:end]
-        ip_int = 0
-        for b in ip_net:
-            ip_int = ip_int * 256 + int(b)    
-        ip = socket.ntohl(ip_int)
-        ip_str = socket.inet_ntoa(struct.pack(">I",ip))
-        port_int = peer_net[0] * 256 + peer_net[1]
-        peers[ip_str] = port_int
+        port_net = peer_bytes[mid:end]
+        
+        
+        ip_net = peer_bytes[start:mid]
+        ip_host = ip_net[3::-1]       
+        bytes_str = "".join(map(chr, ip_host))
+        ip_str = socket.inet_ntoa(bytes_str)
+        
+        port_int = port_net[0] * 256 + port_net[1]  
+        peers[ip_str] = port_int 
+        
         start = start + 6
         mid = mid + 6
         end = end + 6
+       
     return peers
     
 def parse_resp(response):
