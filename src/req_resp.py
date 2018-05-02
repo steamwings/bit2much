@@ -11,6 +11,7 @@ from encode_src import *
 # bytearray (to hex string then) to integer
 # Switches byte order for Little Endian systems unless ntoh=False
 def ba_to_int(bytearr, ntoh=True):
+    if str(bytearr) == '': return 0;
     if ntoh and (sys.byteorder == 'little'): bytearr.reverse()
     return int(binascii.hexlify(bytearr), 16)
 
@@ -24,6 +25,7 @@ def parse_peers(peer_string, compact=1):
     peers = [] 
     peer_list = list(peer_string)      
     peer_bytes = bytearray(peer_list)
+    total_bytes = len(peer_bytes)
       
     if compact==0: # support for peer_id
         ip_st = 20
@@ -35,7 +37,10 @@ def parse_peers(peer_string, compact=1):
     end = port_st + 2
     inc = end
 
-    peers_count = len(peer_bytes)/6
+    peers_count = total_bytes/inc
+    if verbose and (total_bytes % inc) != 0:
+        print("Parse error! peer_bytes: %(sz)d \n expected divisor: %(inc)d" % \
+                {"sz": total_bytes, "inc": inc})
    
     for i in range(0, peers_count):
         peer_net = peer_bytes[peer_st:ip_st]
