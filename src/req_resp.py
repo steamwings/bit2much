@@ -5,8 +5,10 @@ import random
 import binascii
 import socket
 import sys
+from util import *
 from parse_torrent import *
 from encode_src import *
+
 
 # bytearray (to hex string then) to integer
 # Switches byte order for Little Endian systems unless ntoh=False
@@ -49,8 +51,10 @@ def parse_peers(peer_string, compact=1):
        
         peer_id = ba_to_int(peer_net)
 
-        ip_host = ba_to_int(ip_net) # instead of ip_net.reverse()
-        bytes_str = str(ip_host) #instead of "".join(map(chr, ip_host))
+        if(sys.byteorder == 'little'):
+            ip_net.reverse() # instead of ip_net.reverse()
+        bytes_str = str(ip_net) #instead of "".join(map(chr, ip_host))
+        print bytes_str
         ip_str = socket.inet_ntoa(bytes_str)
         
         port_int = ba_to_int(port_net)  
