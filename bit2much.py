@@ -79,6 +79,8 @@ if __name__ == '__main__':
     
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
+    for k in sorted(peers.iterkeys()):
+        print k + ": " + str(peers[k])
     
     
     
