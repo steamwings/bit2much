@@ -1,3 +1,5 @@
+import sys
+import binascii
 verbose = False
 
 # bytearray (to hex string then) to integer
