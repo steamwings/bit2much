@@ -1,13 +1,37 @@
 from scapy.packet import *
 from util import *
 
-# return handshake bytes
-def get_handshake(info_hash, peer_id):
-    return bytearray.fromhex('13') \ # length of protocol name
-            + bytearray('BitTorrent protocol') \ # protocol name
-            + bytearray(8) \ # padding
-            + info_hash + int_to_ba(peer_id)
+threads = []
 
+# This will run in a thread for each peer
+def peer_handler(socket, addr, peer_id=None):
+    # download and upload
+    threads.remove(thread.get_ident()) # remove tid from threads
+    thread.exit()
+
+# This will run in only one thread
+def accept_new_peers(port):
+    sock = socket(AF_INET, SOCK_STREAM)
+    sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+    sock.bind(('local_host',port))
+    sock.listen(5)
+
+    while True:
+        newsock, addr = sock.accept()
+        tid = thread.start_new_thread(peer_handler, (newsock,addr))
+        threads.append(tid)
+
+
+# return handshake bytearray
+def get_handshake(info_hash, peer_id):
+    return bytearray.fromhex('13') \
+            + bytearray('BitTorrent protocol') \
+            + bytearray(8) \
+            + bytearray(info_hash) + bytearray(peer_id)
+
+
+
+'''
 class BT(Packet):
     name = "BTLEN"
     field_desc = [
@@ -27,7 +51,7 @@ class BTSTAT(Packet):
     field_desc = [
         
     ]
-
+'''
 ''' 
 # BitTorrent handshake
 class BTHS(Packet):

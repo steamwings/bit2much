@@ -90,5 +90,6 @@ def get_info_hash(decoded_data):
             encoded_info = encode(value)
             sha = hashlib.sha1()
             sha.update(encoded_info)
-            info_hash = sha.digest()
-            return url_encode(info_hash)
+            return sha.digest()
+    if verbose:
+        print("get_info_hash failed!")
