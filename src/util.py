@@ -1,6 +1,5 @@
 import sys
 import binascii
-
 verbose = False
 little_endian = (sys.byteorder == 'little')
 

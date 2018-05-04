@@ -24,6 +24,8 @@ def parse_peers(peer_string, compact=1):
     peer_st = 0 
     end = port_st + 2
     inc = end
+    
+    
 
     peers_count = total_bytes/inc
     if verbose and (total_bytes % inc) != 0:
@@ -71,7 +73,7 @@ def parse_resp(response):
         elif k == "incomplete":
             incomplete = v
         elif k == "peers":
-            peers = parse_peers(v)   
+            peers = parse_peers(v)
     return (interval, tracker_id, complete, incomplete, peers)          
 
 def create_id():

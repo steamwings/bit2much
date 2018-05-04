@@ -3,12 +3,17 @@ import sys
 import thread
 import urllib2
 import argparse
+import socket 
+from threading import Thread 
+from SocketServer import ThreadingMixIn
+
 sys.path.insert(0, '/home/vmuser/Desktop/Bit2Much/src')
 from parse_torrent import *
 from req_resp import *
 from util import verbose
 from protocol import *
 from encode_src import *
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='Bit2Much.py')
@@ -41,7 +46,7 @@ if __name__ == '__main__':
     
     #info_hash-> 20-byte SHA1 hash of the value of the info key from the MetaInfo file
     info_hash = get_info_hash(decoded_data)
-    print binascii.hexlify(info_hash)
+    #print binascii.hexlify(info_hash)
     info_hash_URL = url_encode(info_hash)
     
     #peer_id->urlencoded 20-byte string used as a unique ID for the client
@@ -75,7 +80,7 @@ if __name__ == '__main__':
     url_request = urllib2.Request(tracker_url)
     url_response = urllib2.urlopen(url_request)
     url_resp = url_response.read()
-    
+     
 ##########################TRACKER RESPONSE########################### 
     
     decoded_resp = decode_data(url_resp)
@@ -92,12 +97,13 @@ if __name__ == '__main__':
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
     
+
 ###############################DOWNLOAD###############################
-    set_handshake() # Called just once
+    set_handshake(info_hash, my_peer_id) # Called just once
 
     for (ip, port, peer_id) in peers:
-        sock = socket(AF_INET, SOCK_STREAM)
-        sock.setsockopt(SOL_SOCKET, SO_REUSEADDR, 1)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         sock.connect((ip,port))
         tid = thread.start_new_thread(peer_handler, (sock,ip,peer_id))
         threads.append(tid)
@@ -110,7 +116,7 @@ if __name__ == '__main__':
         # do periodic choking
         # choke(slow); unchoke(fast); 
         # check status of pieces
+
         # activate end game mode
         if verbose and len(threads) == 0:
             print("No connected peers.")
-        
