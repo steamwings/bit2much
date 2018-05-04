@@ -82,7 +82,7 @@ if __name__ == '__main__':
     if verbose:
         print decoded_resp
     parsed_resp = parse_resp(decoded_resp)
-    
+     
     #indicates a failure reason
     if parsed_resp is None:
         if verbose: 
@@ -93,10 +93,7 @@ if __name__ == '__main__':
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
     
 ###############################DOWNLOAD###############################
-    
-    handshake = get_handshake(info_hash,my_peer_id)
-    
-    # server = SocketServer.TCPServer(("local_host",port), HandlePeer)
+    set_handshake() # Called just once
 
     for (ip, port, peer_id) in peers:
         sock = socket(AF_INET, SOCK_STREAM)
@@ -105,9 +102,18 @@ if __name__ == '__main__':
         tid = thread.start_new_thread(peer_handler, (sock,ip,peer_id))
         threads.append(tid)
 
+    # accept thread allows new peers after download starts
+    tid = thread.start_new_thread(accept_new_peers, (port))
+    threads.append(tid)
+
     while(incomplete):
         # do periodic choking
+        # choke(slow); unchoke(fast); 
         # check status of pieces
-        pass
+        # activate end game mode
+        if verbose and len(threads) == 0:
+            print("No connected peers.")
+        
+
        
     
