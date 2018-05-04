@@ -35,14 +35,14 @@ def parse_peers(peer_string, compact=1):
         ip_net = peer_bytes[ip_st:port_st]
         port_net = peer_bytes[port_st:end]
        
-        peer_id = ba_to_int(peer_net)
+        peer_id = ba2int(peer_net)
 
         if(sys.byteorder == 'little'):
             ip_net.reverse() # instead of ip_net.reverse()
         bytes_str = str(ip_net) #instead of "".join(map(chr, ip_host))
         ip_str = socket.inet_ntoa(bytes_str)
         
-        port_int = ba_to_int(port_net)  
+        port_int = ba2int(port_net)  
         peers.append((ip_str, port_int, peer_id))
          
         peer_st += inc

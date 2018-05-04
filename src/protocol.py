@@ -24,6 +24,8 @@ def peer_handler(socket, addr, peer_id=None):
 
     while(incomplete):
         msg = next_msg(socket)
+        if msg is None: # Could not parse
+            end_from_thread(socket)
         # deal with msg
 
     end_from_thread(socket)
@@ -49,6 +51,10 @@ def accept_new_peers(port):
 
 # return handshake bytearray
 def set_handshake():
+    if info_hash is None:
+        raise "info_hash is None"
+    if my_peer_id is None:
+        raise "my_peer_id is None"
     handshake = bytearray.fromhex('13') \
             + bytearray('BitTorrent protocol') \
             + bytearray(8) \
@@ -56,7 +62,6 @@ def set_handshake():
 
 def good_handshake(h,peer_id):
     h = bytearray(h)
-
     if h[0] != 0x13:
         return False
     if h[1:20] != "BitTorrent protocol":
@@ -70,7 +75,7 @@ def good_handshake(h,peer_id):
 
     return True
 
-def next_message(sock):
+def next_msg(sock):
     try:
         mlen = sock.recv(4) # length prefix
         msg = BT(sock.recv(mlen))
@@ -78,25 +83,86 @@ def next_message(sock):
         msg = None
     return msg
 
-class BT:
-    def __init__(self, data=''):
-        data = bytearray(data)
-        self.len = len(data)
-        self.payload = None
-        if data == '': 
-            self.type = types_by_name["keep_alive"] 
-        else:
-            self.type = int(data[0])
-            if self.len > 1:
-                self.payload = data[1:]
-        
-        if self.type == types_by_name["request"] \
-            or self.type == types_by_name["cancel"]:
-            self.index = data[1:5]
-            self.begin = data[5:9]
-            self.piece = data[9:13]
-        elif self.type == types_by_name["have"]:
-            self.index = data[1:5]
-            self.begin = data[5:9]
-            self.length = data[9:13]
+def send_msg(sock, bt):
+    try:
+        sock.send(bt.get_pkt())
+        return True
+    except:
+        return False
 
+class BT:
+    def __init__(self, data='', bttype=None):
+        self.data = None
+        if bttype == None: # Parse from data
+            self.data = bytearray(data)
+            self.len = len(data)
+            self.payload = None
+            if data == '': 
+                self.type = types_by_name["keep_alive"] 
+            else:
+                self.type = ba2int(data[0], numbytes=1)
+                if self.len > 1:
+                    self.payload = data[1:]
+        
+            if self.type == types_by_name["request"] \
+                or self.type == types_by_name["cancel"]:
+                self.index = ba2int(data[1:5])
+                self.begin = ba2int(data[5:9])
+                self.piece = ba2int(data[9:13])
+            elif self.type == types_by_name["have"]:
+                self.index = ba2int(data[1:5])
+                self.begin = ba2int(data[5:9])
+                self.length = ba2int(data[9:13])
+        else: # Create data from fields 
+            self.type = bttype
+            if self.type == types_by_name["request"] \
+                or self.type == types_by_name["cancel"]\
+                or self.type == types_by_name["piece"]:
+                self.index = None
+                self.begin = None
+                self.piece = None
+            elif self.type == types_by_name["have"]:
+                self.index = None
+                self.begin = None
+                self.length = None
+            elif self.type == types_by_name["bitfield"]:
+                self.bitfield = None
+
+    def get_pkt(self): # return packet data from fields (like i2m)
+        self.data = int2ba(self.type, numbytes=4)
+
+        if self.type == types_by_name["request"] \
+            or self.type == types_by_name["cancel"]\
+            or self.type == types_by_name["piece"]:
+            if self.index is None or self.begin is None or self.piece is None:
+                raise BTMemberNotSetException("You must set the index, begin, and piece members to create this type of packet!")
+            else:
+                self.data += int2ba(self.index,4)\
+                    + int2ba(self.begin,4) \
+                    + int2ba(self.piece,4)
+        elif self.type == types_by_name["have"]:
+            if self.index is None or self.begin is None or self.length is None:
+                raise BTMemberNotSetException("You must set the index, begin, and length members to create this type of packet!")
+            else:
+                self.data += int2ba(self.index,4)\
+                    + int2ba(self.begin,4)\
+                    + int2ba(self.length,4)
+        elif self.type == types_by_name["keep_alive"]:
+            self.data = bytearray('')
+        elif self.type == types_by_name["bitfield"]:
+            if self.bitfield is None:
+                raise BTMemberNotSetException("You must set the bitfield member to create this type of packet.")
+            self.data += int2ba(self.bitfield)
+        #else we're done because there's no payload    
+
+        return str(int2ba(len(self.data),numbytes=4) + self.data)
+
+    # It might be helpful to properly write this for debugging purposes
+    def __str__(self):
+        print("type: %(t)s..." % {'t':self.type})        
+
+class BTMemberNotSetException(Exception):
+    """Raise when a needed BT member was not set"""
+
+
+        

@@ -114,6 +114,3 @@ if __name__ == '__main__':
         if verbose and len(threads) == 0:
             print("No connected peers.")
         
-
-       
-    
