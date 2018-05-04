@@ -3,6 +3,9 @@ import sys
 import thread
 import urllib2
 import argparse
+import socket 
+from threading import Thread 
+from SocketServer import ThreadingMixIn
 sys.path.insert(0, '/home/vmuser/Desktop/Bit2Much/src')
 from parse_torrent import *
 from req_resp import *
@@ -75,7 +78,7 @@ if __name__ == '__main__':
     url_request = urllib2.Request(tracker_url)
     url_response = urllib2.urlopen(url_request)
     url_resp = url_response.read()
-    
+     
 ##########################TRACKER RESPONSE########################### 
     
     decoded_resp = decode_data(url_resp)
@@ -92,7 +95,8 @@ if __name__ == '__main__':
     #a tuple of information from Tracker's Response
     (interval, tracker_id, complete, incomplete, peers) = parsed_resp
     
-###############################DOWNLOAD###############################
+###########################INITITATE THREADS############################
+
     
     handshake = get_handshake(info_hash,my_peer_id)
     
@@ -108,6 +112,5 @@ if __name__ == '__main__':
     while(incomplete):
         # do periodic choking
         # check status of pieces
-        pass
-       
+        pass  
     
