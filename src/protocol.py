@@ -9,7 +9,7 @@ threads = []
 handshake = None # This must be set by set_handshake
 types = {0:"choke",1:"unchoke",2:"interested",3:"not_interested",\
         4:"have",5:"bitfield",6:"request",7:"piece",\
-        8:"cancel",9:"port",20:"extended"}
+        8:"cancel",9:"port",20:"extended",256:"keep_alive"}
 types_by_name = {v: k for k,v in types.iteritems()}
 
 # This will run in a thread for each TCP connection and peer
@@ -23,23 +23,28 @@ def peer_handler(socket, addr, peer_id=None):
             end_from_thread(socket)
 
     #states
-    am_chocking = 1
+    am_choking = 1
     am_interested = 0
-    peer_chocking = 1
+    peer_choking = 1
     peer_interested = 0
     
-    #block is downloaded by a client when am_interested=1 and peer_chocking=0
-    #block is uploaded by a client when am_chockin=0 and peer_interested=1    
-    
-    while(incomplete):
+    # blocks are downloaded by a client when am_interested=1 and peer_choking=0
+    # blocks are uploaded by a client when am_choking=0 and peer_interested=1    
+    while(incomplete): # iterate on received messages
         msg = next_msg(socket)
         if msg is None: # Could not parse
             end_from_thread(socket)
 
+        if verbose:
+            print("Received %(t)s type" % types[msg.type])
+
+        # default response
+        bt = BT(bttype=types_by_name["keep_alive"]) # Observe that the 'bttype=' is not necessary since it's the second argument
+
         if msg.type == 0: #choke
-            peer_chocking = 1
+            peer_choking = 1
         elif msg.type == 1: #unchoke
-            peer_chocking = 0
+            peer_choking = 0
         elif msg.type == 2: #interested
             peer_interested = 1
         elif msg.type == 3: #not interested
@@ -56,9 +61,23 @@ def peer_handler(socket, addr, peer_id=None):
             cancel_msg(msg)   
         elif msg.type == 9: #port
             port_msg(msg)               
+        # there are other message types
+
+        send_msg(socket, bt) 
+
 
     end_from_thread(socket)
 
+''' # EXAMPLE CODE
+def example_bt(socket):
+    b = BT(6) # Request type
+    b.index = 55
+    b.begin = 55
+    b.piece = 55
+    send_msg(socket,b) # send_msg calls b.get_data()
+'''
+
+# Not sure if it's worth it to have separate functions for each; we'll see how much logic is needed
 def have_msg(msg):
     print "Received HAVE type"
 
@@ -96,18 +115,16 @@ def accept_new_peers(port):
         threads.append(tid)
 
 
-# return handshake bytearray
-<<<<<<< HEAD
-def set_handshake():
+''' # I'd like to figure out what the issue was with the globals...    
     if info_hash is None:
         raise "info_hash is None"
     if my_peer_id is None:
         raise "my_peer_id is None"
-=======
+'''
+# return handshake bytearray
 def set_handshake(hash_arg, id_arg):
     info_hash = hash_arg
     my_peer_id = id_arg
->>>>>>> de7b79ef04522b07a177a81b6b7c401df3b55148
     handshake = bytearray.fromhex('13') \
             + bytearray('BitTorrent protocol') \
             + bytearray(8) \
@@ -129,20 +146,16 @@ def good_handshake(h,peer_id):
 
     return True
 
-<<<<<<< HEAD
-def next_msg(sock):
-=======
+
 #creates a BT object based on the msg received
-def next_message(sock):
->>>>>>> de7b79ef04522b07a177a81b6b7c401df3b55148
+def next_msg(sock):
     try:
         mlen = sock.recv(4) # length prefix
-        msg = BT(sock.recv(mlen))
+        msg = BT(data=sock.recv(mlen))
     except:
         msg = None
     return msg
 
-<<<<<<< HEAD
 def send_msg(sock, bt):
     try:
         sock.send(bt.get_pkt())
@@ -150,11 +163,8 @@ def send_msg(sock, bt):
     except:
         return False
 
-=======
-#parses the msg received
->>>>>>> de7b79ef04522b07a177a81b6b7c401df3b55148
 class BT:
-    def __init__(self, data='', bttype=None):
+    def __init__(self, bttype=None, data=''):
         self.data = None
         if bttype == None: # Parse from data
             self.data = bytearray(data)
